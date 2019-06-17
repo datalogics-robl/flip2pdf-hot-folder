@@ -1,6 +1,5 @@
 ﻿$folder = 'C:\Users\robl\src\BlogArticle\watched_dir'
 $destinationFolder = 'C:\Users\robl\src\BlogArticle\destination_dir\'
-$outputName = $destinationFolder + 'output.pdf'
 
 $supportedTypes = ".doc", ".docx", ".xls", ".xlsx", ".ppt", ".pptx", ".ps", ".eps" # TODO: add image types
 
@@ -13,6 +12,7 @@ $onCreated = Register-ObjectEvent $fsw Created -SourceIdentifier FileConverted -
   $name = $Event.SourceEventArgs.Name
   $timeStamp = $Event.TimeGenerated
   $extension = [System.IO.Path]::GetExtension($name).ToLower()
+  $outputName = $destinationFolder + [System.IO.Path]::GetFileNameWithoutExtension($name) + ".pdf"
  
   if ($supportedTypes.Contains($extension)) {
     Write-Host "The file '$name' was converted at $timeStamp"
