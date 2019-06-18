@@ -1,6 +1,10 @@
-﻿$folder = 'C:\Users\robl\src\BlogArticle\watched_dir'
-$destinationFolder = 'C:\Users\robl\src\BlogArticle\destination_dir\'
-$logpath = $destinationFolder + "convertfile.log"
+﻿param (
+  [Parameter(Mandatory=$true)]$source,
+  [Parameter(Mandatory=$true)]$destination,
+  $logpath = $destination + "\convertfile.log"
+)
+
+$destination += "\"
 
 # Function to write to our log file
 function Write-Log {
@@ -8,7 +12,7 @@ function Write-Log {
   "$(Get-Date -Format G) : $message" | Out-File -FilePath $logpath -Append -Force
 }
 
-$fsw = New-Object IO.FileSystemWatcher $folder, "*" -Property @{
+$fsw = New-Object IO.FileSystemWatcher $source, "*" -Property @{
   IncludeSubdirectories = $true
   NotifyFilter = [IO.NotifyFilters]'FileName, LastWrite'
 }
@@ -17,7 +21,7 @@ $onCreated = Register-ObjectEvent $fsw Created -SourceIdentifier FileConverted -
   $path = $Event.SourceEventArgs.FullPath
   $name = $Event.SourceEventArgs.Name
   $extension = [System.IO.Path]::GetExtension($name).ToLower()
-  $outputName = $destinationFolder + [System.IO.Path]::GetFileNameWithoutExtension($name) + ".pdf"
+  $outputName = $destination + [System.IO.Path]::GetFileNameWithoutExtension($name) + ".pdf"
  
   # Ignore lock files
   if ($name.StartsWith(".~lock.")) {
@@ -25,7 +29,7 @@ $onCreated = Register-ObjectEvent $fsw Created -SourceIdentifier FileConverted -
   }
 
   $result = Invoke-Command -ScriptBlock { flip2pdf --input $path --output $outputName }
-  Move-Item $path -Destination $destinationFolder -Force # Force will overwrite files with the same name
+  Move-Item $path -Destination $destination -Force # Force will overwrite files with the same name
 
   # Log results
   if ($LASTEXITCODE -eq 0) {
