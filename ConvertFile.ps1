@@ -1,7 +1,10 @@
 ﻿$folder = 'C:\Users\robl\src\BlogArticle\watched_dir'
 $destinationFolder = 'C:\Users\robl\src\BlogArticle\destination_dir\'
 
-$supportedTypes = ".doc", ".docx", ".xls", ".xlsx", ".ppt", ".pptx", ".ps", ".eps" # TODO: add image types
+$officeTypes = ".doc", ".docx", ".xls", ".xlsx", ".ppt", ".pptx"
+$postscriptTypes = ".ps", ".eps"
+$imageTypes = ".bmp", ".jpg", ".jpeg", ".png", ".tif", ".tiff"
+$supportedTypes = $officeTypes + $postscriptTypes + $imageTypes
 
 $fsw = New-Object IO.FileSystemWatcher $folder, "*.*" -Property @{
   IncludeSubdirectories = $true
