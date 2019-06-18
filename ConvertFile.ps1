@@ -25,13 +25,13 @@ $onCreated = Register-ObjectEvent $fsw Created -SourceIdentifier FileConverted -
   $outputName = $destinationFolder + [System.IO.Path]::GetFileNameWithoutExtension($name) + ".pdf"
  
   if ($supportedTypes.Contains($extension)) {
-    Invoke-Command -ScriptBlock { flip2pdf --input $path --output $outputName }
+    $result = Invoke-Command -ScriptBlock { flip2pdf --input $path --output $outputName }
     Move-Item $path -Destination $destinationFolder -Force # Force will overwrite files with the same name
 
     if ($LASTEXITCODE -eq 0) {
       Write-Log "$name successfully converted to $outputName"
     } else {
-      Write-Log "Conversion of $name failed with error code: $LASTEXITCODE"
+      Write-Log "Conversion of $name failed with error code: $LASTEXITCODE, message: $($result[5])"
     }
   }
 }
