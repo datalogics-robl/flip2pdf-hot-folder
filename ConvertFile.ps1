@@ -22,9 +22,9 @@ $onCreated = Register-ObjectEvent $fsw Created -SourceIdentifier FileConverted -
   $name = $Event.SourceEventArgs.Name
   $extension = [System.IO.Path]::GetExtension($name).ToLower()
   $outputName = $destination + [System.IO.Path]::GetFileNameWithoutExtension($name) + ".pdf"
- 
-  # Ignore lock files
-  if ($name.StartsWith(".~lock.")) {
+  
+  # Ignore lock files or JSON configuration files
+  if ($name.StartsWith(".~lock.") -or $extension -eq ".json") {
     return
   }
 
