@@ -28,7 +28,14 @@ $onCreated = Register-ObjectEvent $fsw Created -SourceIdentifier FileConverted -
     return
   }
 
-  $result = Invoke-Command -ScriptBlock { flip2pdf --input $path --output $outputName }
+  # Use profile if available
+  $profileKeyword = $profile = ""
+  if (Test-Path "$source\profile.json") {
+    $profileKeyword = "--profile"
+    $profile = "$source\profile.json"
+  }
+
+  $result = Invoke-Command { flip2pdf --input $path --output $outputName $profileKeyword $profile }
   Move-Item $path -Destination $destination -Force # Force will overwrite files with the same name
 
   # Log results
